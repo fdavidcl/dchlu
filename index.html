@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<title>David Charte - dch.lu</title>
+<meta name="description" content="David Charte's personal web page" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<meta name="keywords" content="david charte,charte,deivi,fdavidcl" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  :root {
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    --base-gap: .8rem;
+    --light-accent: rgb(225, 200, 255);
+    --light-accent-alt: rgb(200, 225, 255);
+    --shine-color:  rgb(72, 132, 206);
+  }
+  body {
+    background-color: #f5f5f5;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+  }
+  a {
+    color: inherit;
+  }
+  header,
+  nav,
+  main,
+  footer {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .card {
+    /* display: flex; */
+    padding: var(--base-gap);
+    background-color: #252837;
+    color: white;
+    margin-bottom: var(--base-gap);
+    border-top: calc(var(--base-gap) / 2) solid var(--shine-color);
+  }
+  .card h1 {
+    font-size: 3rem;
+  }
+  .card h2 {
+    font-size: 1.6rem;
+    color: #e0e0e0;
+  }
+  .card ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  .card ul {
+    /* display: flex; */
+  }
+  .card ul::before {
+    content: "";
+    width: .5rem;
+    min-height: 100px;
+    height: 100%;
+    color: red;
+    background-color: cyan;
+    border-left: .5rem solid black;
+    border-right: .5rem solid black;
+    display: inline-block;
+  }
+  .card ul li {
+    display: flex;
+    flex-direction: row;
+  }
+  .card ul li::before {
+    /* margin-left: -1.5rem; */
+    width: 1rem;
+    height: 1.6rem;
+    color: red;
+    background-color: cyan;
+    content: "";
+  }
+  header .profile-initials {
+    font-size: calc(2 * var(--base-gap));
+    display: inline-block;
+    vertical-align: top;
+    line-height: .9;
+    width: calc(8* var(--base-gap));
+    height: calc(8* var(--base-gap));
+    text-align: center;
+    background-color: var(--shine-color);
+    color: #000;
+    font-weight: bold;
+    overflow: hidden;
+  }
+  header .profile-initials .initials {
+    text-align: left;
+    /* overflow: hidden; */
+    height: calc(8* var(--base-gap));
+    transition: height .1s ease-out, color .1s ease-out;
+  }
+  header .profile-initials .initials > * {
+  }
+  header .profile-initials .initials-lg {
+    font-size: calc(5 * var(--base-gap));
+    display: block;
+  }
+  header .profile-initials .arrow {
+    font-size: calc(8 * var(--base-gap));
+  }
+  header:hover .profile-initials .initials {
+    height: 0px;
+    color: transparent;
+  }
+  header .profile-pic {
+    display: inline-block;
+  }
+  header img {
+    height: calc(8 * var(--base-gap));
+  }
+  article {
+    /* border: 4px solid; */
+  }
+  details > summary {
+    list-style: none;
+  }
+  .greeting * {
+    display: inline-block;
+    margin: 0;
+  }
+</style>
+<body>
+  <a href="/">
+  <header class="card">
+    <div class="profile-initials">
+      <div class="initials">
+        <span class="initials-lg">D</span>
+        <span class="initials-md">CH.LU</span>
+      </div>
+      <div class="arrow">🡱</div>
+    </div
+    ><div class="profile-pic"
+      ><img src="https://0.gravatar.com/avatar/e74ff10c6f4800d105bdf9b3d6e7e88edc9e0c41ee02e47ef5390ff94a2cdc6a?size=256" alt="">
+    </div>
+    <h1>
+    </h1>
+  </header>
+</a>
+  <main>
+    <article class="card">
+      <p>
+        <h1>Hi!</h1>
+        <h2>Hola! Hej! Salut!</h2>
+      
+
+      I'm
+      <abbr
+        title="you can pronounce this as in Spanish (duh-VEED) or as in English (DAY-vid), either's fine"
+        >David</abbr
+      >, welcome! I code machine learning tools for <a href="https://linkedin.com/in/fdavidcl">work</a> and websites for <a href="https://github.com/fdavidcl?tab=repositories">fun</a>, and maybe do some math along the way.
+    </p>
+    </article>
+    <article class="card">
+      <h1>Links</h1>
+      <ul>
+        <li><a href="https://linkedin.com/in/fdavidcl">LinkedIn</a></li>
+        <li><a href="https://github.com/fdavidcl">GitHub</a></li>
+        <li><a href="https://pixelfed.com/@fdavidcl">Photos</a></li>
+      </ul>
+    </article>
+    <article class="card">
+      <h1>Now</h1>
+    </article>
+  </main>
+  <footer></footer>
+</body>
