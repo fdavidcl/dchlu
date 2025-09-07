@@ -1,4 +1,5 @@
 +++
+template = "prose.html"
 +++
 
 <noscript>
