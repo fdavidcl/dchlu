@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="My blog site.">
+
+  <title>A guide to Ruby in ten lines of code</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://dch.lu/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://dch.lu/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://dch.lu/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://dch.lu/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://dch.lu/hl-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#syntax">Syntax</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#object-oriented-programming">Object oriented programming</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#iteration-and-data-structures">Iteration and data structures</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#i-o">I&#x2F;O</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a href="https:&#x2F;&#x2F;dch.lu&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>A guide to Ruby in ten lines of code</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">2018-03-17</span>
+            </div>
+
+          
+        </div>
+
+        
+        
+
+        
+
+        <p>This is a slightly unorthodox introduction guide to the Ruby language. Through this guide we will examine just ten one-line snippets of code, and discover a lot of features from each of them.</p>
+<p>This is the post version of a talk I gave for <a rel="nofollow noreferrer" href="https://libreim.github.io">LibreIM</a>.</p>
+<h2 id="syntax">Syntax<a class="zola-anchor" href="#syntax" aria-label="Anchor link for: syntax" style="visibility: hidden;"></a>
+</h2>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-support z-function z-builtin z-ruby">puts</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Hello </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby"><span class="z-support z-function z-builtin z-ruby">gets</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>strip</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">!<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span></code></pre>
+<p>This snippet accepts a string from standard input, then cleans the leading and trailing spacing characters and embeds it in a greeting which is shown on standard output. Notice that:</p>
+<ul>
+<li><code>puts</code> and <code>gets</code> are the standard functions for displaying messages and reading input, respectively.</li>
+<li>You can omit parenthesis around parameters for better readability.</li>
+<li><code>#{...}</code> in strings interprets small pieces of code and transforms the output into a string.</li>
+</ul>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-support z-function z-builtin z-ruby">puts</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>boooored<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>upcase <span class="z-keyword z-control z-ruby">unless</span> <span class="z-support z-class z-ruby">Time</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>now<span class="z-punctuation z-accessor z-dot z-ruby">.</span>saturday?
+</span></code></pre>
+<p>This example is so readable you probably don't need a description. Notice that:</p>
+<ul>
+<li>Literals are Ruby objects and can receive methods.</li>
+<li><code>if</code>, <code>unless</code>, <code>while</code> and <code>until</code> can be used as one-line structures.</li>
+<li>There is a convention to end methods which return booleans with <code>?</code> and methods which have non-explicit side effects with <code>!</code>.</li>
+</ul>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">real<span class="z-punctuation z-separator z-sequence z-ruby">,</span> imag <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>(1 + 3i).rectangular<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span></code></pre>
+<p>This snippet assigns the real part of 1 + 3i to <code>real</code> and the imaginary part to <code>imag</code>. Notice that:</p>
+<ul>
+<li>Ruby has built-in support for complex numbers, big numbers (as in symbolic, bigger than <code>long long</code> numbers) and symbolic rationals.</li>
+<li>Assignment allows splatting arrays. The splat operator <code>*</code> allows for related operations. For example,<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"></code></pre>
+</li>
+</ul>
+<p>x, *xs = "[1, 2, 3, 4]"
+```
+performs some Haskell-ish pattern matching: <code>x</code> receives the first element and <code>xs</code> holds the rest of the array. There is also a similar double-splat <code>**</code> for hashes.</p>
+<h2 id="object-oriented-programming">Object oriented programming<a class="zola-anchor" href="#object-oriented-programming" aria-label="Anchor link for: object-oriented-programming" style="visibility: hidden;"></a>
+</h2>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-meta z-class z-ruby"><span class="z-keyword z-control z-class z-ruby">class</span></span><span class="z-meta z-class z-ruby"> </span><span class="z-meta z-class z-ruby"><span class="z-entity z-name z-class z-ruby">DeadPlayerError</span></span><span class="z-meta z-class z-ruby"> <span class="z-punctuation z-separator z-inheritance z-ruby">&lt;</span></span><span class="z-meta z-class z-ruby"> </span><span class="z-meta z-class z-ruby"><span class="z-entity z-other z-inherited-class z-ruby">StandardError</span></span><span class="z-punctuation z-terminator z-statement z-ruby">;</span> <span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>Defines a class useful to return errors (exceptions). Notice that:</p>
+<ul>
+<li>Classes are defined with <code>class</code> (which is syntax sugar for <code>Class.new { ... }</code>).</li>
+<li>There is simple inheritance with <code>&lt;</code>.</li>
+<li>You can throw an error with <code>raise DeadPlayerError</code>. Ruby distinguishes errors, from which a program can recover, and other kinds of exceptions, which leave the program in an invalid state and therefore it must stop.</li>
+</ul>
+<pre data-lang="{.ruby}" class="language-{.ruby} z-code"><code class="language-{.ruby}" data-lang="{.ruby}"><span class="z-text z-plain">Point = &quot;Struct.new :x, :y, :z&quot;
+</span></code></pre>
+<p>Creates a class with getters and setters for the given attributes. Notice that:</p>
+<ul>
+<li>Member attributes of a class are <strong>always</strong> private (or protected, as they are inherited). Thus, the <em>dot</em> only sends methods and doesn't directly access attributes.</li>
+<li>Methods can be defined in a <code>do ... end</code> block. You should consider defining a class if you want to add them.</li>
+<li>New objects are created with <code>Point.new</code>.</li>
+</ul>
+<h2 id="iteration-and-data-structures">Iteration and data structures<a class="zola-anchor" href="#iteration-and-data-structures" aria-label="Anchor link for: iteration-and-data-structures" style="visibility: hidden;"></a>
+</h2>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-support z-function z-builtin z-ruby">puts</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-other z-literal z-lower z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">%w[</span>such elegant wow<span class="z-punctuation z-definition z-string z-end z-ruby">]</span></span></span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>each_with_index<span class="z-punctuation z-accessor z-dot z-ruby">.</span>map <span class="z-punctuation z-section z-scope z-ruby">{</span> <span class="z-meta z-block z-parameters z-ruby"><span class="z-punctuation z-definition z-parameters z-begin z-ruby">|</span></span><span class="z-meta z-block z-parameters z-ruby"><span class="z-variable z-parameter z-ruby">w</span><span class="z-punctuation z-separator z-ruby">,</span><span class="z-variable z-parameter z-ruby">i</span><span class="z-meta z-block z-parameters z-ruby"><span class="z-punctuation z-definition z-parameters z-end z-ruby">|</span></span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">i</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">. </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">w</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-punctuation z-section z-scope z-ruby">}</span>
+</span></code></pre>
+<p>Walks through the array, obtains an array of strings <em>index. element</em> and prints it on stdout. Notice that:</p>
+<ul>
+<li><code>%w[]</code> splits a list of words by spaces and returns an array.</li>
+<li><code>each_with_index</code> iterates giving each element and its index in the collection.</li>
+<li><code>map</code> applies a function on each element of a collection and returns the result.</li>
+<li><code>{...}</code> o <code>do ... end</code> denote <em>blocks</em>, structures of code which are passed to methods in order to be ran from them. Blocks can receive parameters between bars <code>|a, b|</code>.</li>
+</ul>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">dot <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>-&gt;(v1, v2) { v1.zip(v2).reduce(0) { |p, (n, m)| p + n * m } }<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span></code></pre>
+<p>Computes the dot product. Example usage: <code>dot.([1, 2, 3], [-1, 0, 2])</code>. Notice that:</p>
+<ul>
+<li>Lambda functions are defined with <code>-&gt;</code>. As opposed to usual functions or methods, Lambdas are objects.</li>
+<li><code>zip</code> pairs the elements of two or more arrays.</li>
+<li><code>reduce</code> accumulates results of a binary function.</li>
+</ul>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">fib <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Hash.new { |h, i| h[i] = h[i - 2] + h[i - 1] }.update(0 =&gt; 0, 1 =&gt; 1)<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span></code></pre>
+<p>Creates a Hash which contains, for each index, the corresponding term of the Fibonacci sequence. Notice that:</p>
+<ul>
+<li><code>Hash</code> may receive a <em>default</em> initialization (usually <code>nil</code>). This initialization takes place whenever the user attempts to access a value which has not been assigned previously.</li>
+<li><code>Hash#update</code> assigns several values at a time.</li>
+<li>This would be equivalent to a memoized recursive version.</li>
+</ul>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">solution<span class="z-punctuation z-accessor z-dot z-ruby">.</span>neighborhood<span class="z-punctuation z-accessor z-dot z-ruby">.</span>detect <span class="z-punctuation z-section z-scope z-ruby">{</span> <span class="z-meta z-block z-parameters z-ruby"><span class="z-punctuation z-definition z-parameters z-begin z-ruby">|</span></span><span class="z-meta z-block z-parameters z-ruby"><span class="z-variable z-parameter z-ruby">attempt</span><span class="z-punctuation z-separator z-ruby">,</span> <span class="z-variable z-parameter z-ruby">fitness</span><span class="z-meta z-block z-parameters z-ruby"><span class="z-punctuation z-definition z-parameters z-end z-ruby">|</span></span></span> fitness <span class="z-keyword z-operator z-comparison z-ruby">&gt;</span> <span class="z-variable z-other z-readwrite z-instance z-ruby"><span class="z-punctuation z-definition z-variable z-ruby">@</span>current_fitness</span> <span class="z-punctuation z-section z-scope z-ruby">}</span>
+</span></code></pre>
+<p>Assuming the <code>.neighborhood</code> returns a collection of possible solutions and their performance (fitness), this finds the first one which improves the current solution. Actual use: <a rel="nofollow noreferrer" href="https://git.io/vPxQ6">https://git.io/vPxQ6</a>. Notice that:</p>
+<ul>
+<li><code>detect</code> receives a predicate and returns the first ellement of the collection which verifies it.</li>
+<li>If you want to get the best solution in the neighborhood instead, you can use <code>max_by</code>.</li>
+<li>There is a huge list of iteration methods available in any Ruby collection class:
+<a rel="nofollow noreferrer" href="https://ruby-doc.org/core-2.5.0/Enumerable.html"><code>Enumerable</code></a></li>
+</ul>
+<h2 id="i-o">I/O<a class="zola-anchor" href="#i-o" aria-label="Anchor link for: i-o" style="visibility: hidden;"></a>
+</h2>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-support z-function z-builtin z-ruby">open</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-support z-class z-ruby">DATA</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>read<span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>w<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>write <span class="z-support z-class z-ruby">IO</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>read<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-variable z-other z-readwrite z-global z-pre-defined z-ruby"><span class="z-punctuation z-definition z-variable z-ruby">$</span>0</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-support z-function z-builtin z-ruby">gsub</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-regexp z-ruby"><span class="z-string z-regexp z-classic z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">/</span>^#&#39; <span class="z-punctuation z-definition z-string z-end z-ruby">/</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span></code></pre>
+<p>This snippet reads itself (as in, the own program running), uncomments lines marked with <code>#'</code> and passes the result as input to the program started by <code>Kernel#open</code>. Notice that:</p>
+<ul>
+<li><code>$0</code> is the name of the current program/script.</li>
+<li><code>gsub</code> performs global sustitution</li>
+<li><code>Kernel#open</code> opens read/write pipes with other processes when the "filename" looks like <code>"|program_name"</code>.</li>
+</ul>
+<p><em>The catch</em>  The program is hidden in the data section of the <a rel="nofollow noreferrer" href="https://github.com/fdavidcl/ruby-ten-lines/blob/master/slides.rb">original script</a>:</p>
+<pre data-lang="sh" class="language-sh z-code"><code class="language-sh" data-lang="sh"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">__END__</span></span>
+</span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"></span><span class="z-keyword z-operator z-logical z-pipe z-shell">|</span><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">pandoc</span></span><span class="z-meta z-function-call z-arguments z-shell"><span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> -</span>t</span> beamer<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> -</span>o</span> slides.pdf<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>pdf-engine</span><span class="z-keyword z-operator z-assignment z-option z-shell">=</span>xelatex</span>
+</span></code></pre>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 David Charte
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://dch.lu/posts/feed.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;dch.lu&#x2F;posts&#x2F;feed.xml">https:&#x2F;&#x2F;dch.lu&#x2F;posts&#x2F;feed.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;dch.lu&#x2F;posts&#x2F;feed.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://dch.lu/js/main.js"></script>
+</body>
+
+</html>

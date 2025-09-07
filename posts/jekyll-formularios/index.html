@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="My blog site.">
+
+  <title>Un sistema de contribuciones a blogs Jekyll para gente sin conocimientos de Jekyll, GitHub o Markdown</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://dch.lu/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://dch.lu/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://dch.lu/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://dch.lu/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://dch.lu/hl-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#preparativos-previos">Preparativos previos</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#el-backend">El backend</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#el-formulario">El formulario</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#sinatra">Sinatra</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#respondiendo-a-peticiones">Respondiendo a peticiones</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#anadiendo-un-editor-de-verdad">Añadiendo un editor de verdad</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#los-extras">Los extras</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#en-conclusion">En conclusión...</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a href="https:&#x2F;&#x2F;dch.lu&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Un sistema de contribuciones a blogs Jekyll para gente sin conocimientos de Jekyll, GitHub o Markdown</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">2016-08-22</span>
+            </div>
+
+          
+        </div>
+
+        
+        
+
+        
+
+        <p>Durante un tiempo, los colaboradores del <a rel="nofollow noreferrer" href="http://tux.ugr.es/dgiim/blog">blog de LibreIM</a> hemos tenido que componer los posts prácticamente a mano, haciendo uso de un editor de texto para escribirlos, Git para llevar el registro de cambios y una <em>pull request</em> en GitHub para enviar el post, revisarlo y corregirlo. Evidentemente, este puede ser un proceso ideal para desarrolladores acostumbrados al proceso, pero está lejos de ser perfecto cuando tratamos de mantener un blog colaborativo abierto a que cualquiera publique su conocimiento. Lo que buscamos es una forma de abstraer el proceso de edición y envío de posts para hacer el blog accesible a mucha más gente.</p>
+<p>La solución que concebimos consta de dos partes: por un lado, un backend que utilizaría una cuenta <em>bot</em> de GitHub para la gestión automática de ramas y <em>pull requests</em>; por otro, una aplicación web con un formulario y un sencillo editor desde la que se enviarían los posts.</p>
+<p>{:.fig}
+<img src="/assets/images/jekyll-form.png" alt="Formulario resultante" />
+Un ejemplo del <a rel="nofollow noreferrer" href="http://tux.ugr.es/dgiim/new/post">formulario resultante</a></p>
+<h2 id="preparativos-previos">Preparativos previos<a class="zola-anchor" href="#preparativos-previos" aria-label="Anchor link for: preparativos-previos" style="visibility: hidden;"></a>
+</h2>
+<p>Para crear nuevos <em>commits</em> y <em>pull requests</em> necesitamos una cuenta de GitHub. Podemos usar la propia o crear una nueva. Otorgaremos a dicha cuenta permisos de escritura sobre el repositorio de blog en cuestión. Después, obtendremos un <a rel="nofollow noreferrer" href="https://github.com/settings/tokens">token de acceso personal</a> con permisos de modificación de repositorios. Dicho token lo almacenaremos en las variables de entorno de la shell donde vayamos a hospedar la aplicación, supongamos que bajo el nombre de <code>GITHUB_TOKEN</code>.</p>
+<h2 id="el-backend">El backend<a class="zola-anchor" href="#el-backend" aria-label="Anchor link for: el-backend" style="visibility: hidden;"></a>
+</h2>
+<p>Componer un guion que trabaje con Git automáticamente no es muy complicado. Se podría utilizar directamente un guion de Bash pero, en vistas a integrarlo en la aplicación web, usamos la <a rel="nofollow noreferrer" href="https://rubygems.org/gems/git">gema git</a> para Ruby. Esta permite realizar todo tipo de operaciones sobre repositorios Git, a nosotros nos basta con clonar, abrir una nueva rama, incluir un nuevo archivo en un <em>commit</em> y enviarlo al repositorio remoto. El siguiente código Ruby define una función que realiza todo el proceso, notemos cómo se obtiene por parámetro un <em>block</em> (similar a una función anónima) que permite realizar las modificaciones pertinentes al repositorio:</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> repo.rb
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>fileutils<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>git<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby"><span class="z-meta z-function z-ruby"><span class="z-keyword z-control z-def z-ruby">def</span></span><span class="z-meta z-function z-ruby"> <span class="z-entity z-name z-function z-ruby">modify_repo</span></span><span class="z-meta z-function z-ruby"> </span><span class="z-meta z-function z-parameters z-ruby"><span class="z-variable z-parameter z-ruby">repo</span><span class="z-punctuation z-separator z-ruby">,</span> <span class="z-variable z-parameter z-ruby">head</span><span class="z-punctuation z-separator z-ruby">,</span> <span class="z-variable z-parameter z-ruby">commit_msg</span><span class="z-punctuation z-separator z-ruby">,</span> <span class="z-keyword z-operator z-ruby">&amp;</span><span class="z-variable z-parameter z-ruby">block</span></span>
+</span><span class="z-source z-ruby">  dir <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>.repo<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Usamos el token de acceso para clonar el repositorio
+</span></span><span class="z-source z-ruby">  g <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Git</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-support z-function z-builtin z-ruby">clone</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>https://</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby"><span class="z-meta z-environment-variable z-ruby"><span class="z-variable z-other z-constant z-ruby">ENV</span>[<span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>GITHUB_TOKEN<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>]</span></span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">@github.com/</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">repo</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">.git<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> dir<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Configuramos el email y nombre de la cuenta bot
+</span></span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>config<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>user.name<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>BOT<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>config<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>user.email<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>BOT_EMAIL@example.org<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Creamos una rama nueva
+</span></span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>branch<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>head<span class="z-punctuation z-definition z-group z-end z-ruby">)</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>checkout
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Realizamos modificaciones en el repo
+</span></span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>chdir <span class="z-punctuation z-section z-scope z-ruby">{</span> block<span class="z-punctuation z-accessor z-dot z-ruby">.</span>call <span class="z-punctuation z-section z-scope z-ruby">}</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Commit y push
+</span></span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>add<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-constant z-other z-symbol z-ruby">all<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-constant z-language z-ruby">true</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>commit<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">commit_msg</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">  g<span class="z-punctuation z-accessor z-dot z-ruby">.</span>push<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>origin<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> head<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-support z-class z-ruby">FileUtils</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>rm_rf<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>dir<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>Ahora hemos de añadir la capacidad de crear <em>pull requests</em>, para ello usamos la <a rel="nofollow noreferrer" href="https://rubygems.org/gems/octokit">gema octokit</a>, que acepta el token de acceso que obtuvimos antes:</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> form.rb
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>octokit<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require_relative</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>repo<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">github <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Octokit</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Client</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>access_token</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-environment-variable z-ruby"><span class="z-variable z-other z-constant z-ruby">ENV</span>[<span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>GITHUB_TOKEN<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>]</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">repo <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>BOT/blog<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">base <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>gh-pages<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">head <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>new-post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">modify_repo repo<span class="z-punctuation z-separator z-sequence z-ruby">,</span> head<span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Nuevo post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-keyword z-control z-start-block z-ruby">do</span>
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Creación del nuevo post
+</span></span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">response <span class="z-keyword z-operator z-assignment z-ruby">=</span> github<span class="z-punctuation z-accessor z-dot z-ruby">.</span>create_pull_request<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>repo<span class="z-punctuation z-separator z-sequence z-ruby">,</span> base<span class="z-punctuation z-separator z-sequence z-ruby">,</span> head<span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Nuevo post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span></code></pre>
+<p>Únicamente nos queda obtener del usuario los datos necesarios para crear un nuevo post: un titulo, un autor, una categoría y el contenido.</p>
+<h2 id="el-formulario">El formulario<a class="zola-anchor" href="#el-formulario" aria-label="Anchor link for: el-formulario" style="visibility: hidden;"></a>
+</h2>
+<h3 id="sinatra">Sinatra<a class="zola-anchor" href="#sinatra" aria-label="Anchor link for: sinatra" style="visibility: hidden;"></a>
+</h3>
+<p><a rel="nofollow noreferrer" href="http://www.sinatrarb.com/">Sinatra</a> es un <em>domain specific language</em> (DSL) para Ruby que facilita la creación de aplicaciones web sencillas sin apenas esfuerzo. Basta con escribir las peticiones HTTP que se aceptan y cuál es la respuesta. Además, es muy útil utilizarlo junto a otras gemas de Ruby que ahorren trabajo a la hora de escribir las plantillas y el estilo. Nuestro archivo de dependencias <code>Gemfile</code> queda de la siguiente forma:</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Gemfile
+</span></span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">source <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>https://rubygems.org<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>sinatra<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>sinatra-contrib<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>thin<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>      </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Web server
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>haml<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>      </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> For layouts
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>sass<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>      </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> For stylesheets
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>kramdown<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>  </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> For the preview
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>rouge<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>     </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> For syntax highlighting
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>octokit<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>   </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> For pull requests
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>git<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>       </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Repo management
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>recaptcha<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span> </span><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Some protection against bots
+</span></span></code></pre>
+<p>Para instalar y manejar las dependencias usamos <a rel="nofollow noreferrer" href="http://bundler.io/">Bundler</a>: basta así con ejecutar <code>gem install bundler</code> y tras esto <code>bundle install</code>.</p>
+<h3 id="respondiendo-a-peticiones">Respondiendo a peticiones<a class="zola-anchor" href="#respondiendo-a-peticiones" aria-label="Anchor link for: respondiendo-a-peticiones" style="visibility: hidden;"></a>
+</h3>
+<p>Vamos a ampliar el archivo <code>form.rb</code> creado anteriormente para aceptar y responder un par de peticiones HTTP. Responderemos a <code>GET /</code> mostrando el formulario, que crearemos aparte en una vista en Haml. Por otro lado, al enviar dicho formulario se creará una petición <code>POST /posts</code> con los datos que necesitamos para componer el nuevo post.</p>
+<pre data-lang="haml" class="language-haml z-code"><code class="language-haml" data-lang="haml"><span class="z-text z-haml"><span class="z-meta z-line z-ruby z-haml">-</span><span class="z-meta z-line z-ruby z-haml"><span class="z-source z-ruby z-embedded z-haml"><span class="z-comment z-line z-number-sign z-ruby"># views/form.haml</span></span></span>
+</span><span class="z-text z-haml"><span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">h1</span></span> Nuevo post
+</span><span class="z-text z-haml"><span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">form</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">action<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>/posts<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">method<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">  <span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">input</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">type<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>text<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">name<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>title<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">placeholder<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Título<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">  <span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">input</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">type<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>text<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">name<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>author<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">placeholder<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Autor 1, Autor 2, ...<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">  <span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">input</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">type<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>text<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">name<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>category<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">placeholder<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Categoría<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">  <span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">textarea</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">name<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>content<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">placeholder<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Contenido<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">  <span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">input</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">type<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>submit<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">value<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Enviar<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span></code></pre>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> form.rb
+</span></span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>rubygems<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>bundler<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-support z-class z-ruby">Bundler</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>default</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require_relative</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>repo<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">get <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>/<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-keyword z-control z-start-block z-ruby">do</span>
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Mostramos el formulario
+</span></span><span class="z-source z-ruby">  haml <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>form</span>
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">post <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>/posts/?<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-keyword z-control z-start-block z-ruby">do</span>
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Obtenemos los datos
+</span></span><span class="z-source z-ruby">  title <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>params[:title]<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">  author <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>params[:author]<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">  content <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>params[:content]<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">  category <span class="z-keyword z-operator z-assignment z-ruby">=</span> params<span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>category</span><span class="z-punctuation z-section z-array z-ruby">]</span> <span class="z-keyword z-operator z-logical z-ruby">||</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>unclassified<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Creamos el nombre del archivo
+</span></span><span class="z-source z-ruby">  date <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Date</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>today<span class="z-punctuation z-accessor z-dot z-ruby">.</span>strftime <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span><span class="z-constant z-other z-placeholder z-ruby">%Y</span>-<span class="z-constant z-other z-placeholder z-ruby">%m</span>-<span class="z-constant z-other z-placeholder z-ruby">%d</span><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">  filename <span class="z-keyword z-operator z-assignment z-ruby">=</span> title<span class="z-punctuation z-accessor z-dot z-ruby">.</span>downcase<span class="z-punctuation z-accessor z-dot z-ruby">.</span>split<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span> <span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span><span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-constant z-numeric z-integer z-decimal z-ruby">0</span><span class="z-keyword z-operator z-range z-ruby">..</span><span class="z-constant z-numeric z-integer z-decimal z-ruby">4</span><span class="z-punctuation z-section z-array z-ruby">]</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>join<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>-<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  github <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Octokit</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Client</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>access_token</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-environment-variable z-ruby"><span class="z-variable z-other z-constant z-ruby">ENV</span>[<span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>GITHUB_TOKEN<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>]</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  repo <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>BOT/blog<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">  base <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>gh-pages<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">  head <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>new-post-</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">filename</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  modify_repo repo<span class="z-punctuation z-separator z-sequence z-ruby">,</span> head<span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Nuevo post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-keyword z-control z-start-block z-ruby">do</span>
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Creamos el archivo del post
+</span></span><span class="z-source z-ruby">    <span class="z-support z-class z-ruby">File</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-support z-function z-builtin z-ruby">open</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>_posts/</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">date</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">-</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">filename</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">.md<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>w<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span> <span class="z-keyword z-control z-start-block z-ruby">do</span> <span class="z-meta z-block z-parameters z-ruby"><span class="z-punctuation z-definition z-parameters z-begin z-ruby">|</span></span><span class="z-meta z-block z-parameters z-ruby"><span class="z-variable z-parameter z-ruby">f</span><span class="z-meta z-block z-parameters z-ruby"><span class="z-punctuation z-definition z-parameters z-end z-ruby">|</span></span></span>
+</span><span class="z-source z-ruby">        f<span class="z-punctuation z-accessor z-dot z-ruby">.</span>write <span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&lt;&lt;EOF</span></span></span><span class="z-meta z-string z-heredoc z-ruby"></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">+++
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">title = &quot;</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">title</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-unquoted z-heredoc z-ruby">&quot;
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">authors = &quot;</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">author<span class="z-punctuation z-accessor z-dot z-ruby">.</span>split <span class="z-meta z-string z-regexp z-ruby"><span class="z-string z-regexp z-classic z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">/</span>,<span class="z-constant z-character z-escape z-ruby">\s</span>*<span class="z-punctuation z-definition z-string z-end z-ruby">/</span></span></span></span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-unquoted z-heredoc z-ruby">&quot;
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">category = &quot;</span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">category</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-unquoted z-heredoc z-ruby">&quot;
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">+++
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby">
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby"></span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">content</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-unquoted z-heredoc z-ruby">
+</span></span></span><span class="z-source z-ruby"><span class="z-meta z-string z-heredoc z-ruby"><span class="z-string z-unquoted z-heredoc z-ruby"></span><span class="z-string z-unquoted z-heredoc z-ruby"><span class="z-punctuation z-definition z-string z-end z-ruby">EOF</span></span></span>
+</span><span class="z-source z-ruby">    <span class="z-keyword z-control z-ruby">end</span>
+</span><span class="z-source z-ruby">  <span class="z-keyword z-control z-ruby">end</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">  response <span class="z-keyword z-operator z-assignment z-ruby">=</span> github<span class="z-punctuation z-accessor z-dot z-ruby">.</span>create_pull_request<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>repo<span class="z-punctuation z-separator z-sequence z-ruby">,</span> base<span class="z-punctuation z-separator z-sequence z-ruby">,</span> head<span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Nuevo post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span><span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>Para iniciar el servidor web con nuestra aplicación, debería bastar con ejecutar <code>ruby form.rb</code> en el terminal.</p>
+<h3 id="anadiendo-un-editor-de-verdad">Añadiendo un editor de verdad<a class="zola-anchor" href="#anadiendo-un-editor-de-verdad" aria-label="Anchor link for: anadiendo-un-editor-de-verdad" style="visibility: hidden;"></a>
+</h3>
+<p>Todo esto ya está muy bien, y la aplicación ahorra un montón de esfuerzo para cada vez que se crea un nuevo post. Pero aún queda una barrera que evitaría que algunos usuarios estuvieran cómodos escribiendo: el marcado de formato con Markdown. Existen diversos editores Markdown que pueden incrustarse en una página web, algunos con amplias funcionalidades y otros más sencillos. Nosotros optamos por <a rel="nofollow noreferrer" href="https://simplemde.com/">SimpleMDE</a>, que facilita la escritura mediante algunas pistas visuales en el código y unos botones que dan acceso a la mayoría de opciones de formato de Markdown.</p>
+<p>Este editor aporta además una opción de previsualización personalizable, lo que quiere decir que podemos modificar la forma en que se compila el código Markdown y se muestra dicha vista previa. Como los blogs Jekyll usan el intérprete <a rel="nofollow noreferrer" href="http://kramdown.gettalong.org/">Kramdown</a> por defecto, podemos añadir una ruta al servidor que compile un documento mediante esta herramienta. Además, utilizamos también la gema <a rel="nofollow noreferrer" href="http://rouge.jneen.net/">Rouge</a> para resaltado de código.</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> form.rb
+</span></span><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> ...
+</span></span><span class="z-source z-ruby">post <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>/preview/?<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-keyword z-control z-start-block z-ruby">do</span>
+</span><span class="z-source z-ruby">  <span class="z-support z-class z-ruby">Kramdown</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Document</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>params<span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>content</span><span class="z-punctuation z-section z-array z-ruby">]</span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">syntax_highlighter<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>rouge</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span>to_html
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>Por otro lado, el editor habrá que inicializarlo mediante un código similar al siguiente:</p>
+<pre data-lang="haml" class="language-haml z-code"><code class="language-haml" data-lang="haml"><span class="z-text z-haml"><span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">form</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">action<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>/posts<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">method<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>post<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">  <span class="z-meta z-line z-ruby z-haml">-</span><span class="z-meta z-line z-ruby z-haml"><span class="z-source z-ruby z-embedded z-haml"><span class="z-comment z-line z-number-sign z-ruby"># ...</span></span></span>
+</span><span class="z-text z-haml">  <span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">textarea</span></span><span class="z-entity z-name z-tag z-id z-haml">#markdown_editor</span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">name<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>content<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">placeholder<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Contenido<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml"><span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">link</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">rel<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>stylesheet<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">href<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml"><span class="z-meta z-tag z-haml"><span class="z-punctuation z-definition z-tag z-haml">%</span><span class="z-entity z-name z-tag z-haml">script</span></span><span class="z-meta z-section z-attributes z-haml">{<span class="z-constant z-other z-symbol z-ruby">src<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>}</span>
+</span><span class="z-text z-haml">:javascript
+</span><span class="z-text z-haml"><span class="z-comment z-line z-slash z-haml">  <span class="z-punctuation z-section z-comment z-haml">/</span>/ La típica función para peticiones AJAX
+</span></span><span class="z-text z-haml">  function AjaxRequest(url, method, data, callback) {
+</span><span class="z-text z-haml">    var xmlhttp;
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">    if (window.XMLHttpRequest)
+</span><span class="z-text z-haml">      xmlhttp = &quot;new XMLHttpRequest();&quot;
+</span><span class="z-text z-haml">    else
+</span><span class="z-text z-haml">      xmlhttp = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">    xmlhttp.onreadystatechange = &quot;function() {&quot;
+</span><span class="z-text z-haml">      if (xmlhttp.readyState == 4 &amp;&amp; xmlhttp.status == 200) {
+</span><span class="z-text z-haml">        if (xmlhttp.responseXML) {
+</span><span class="z-text z-haml">          callback(xmlhttp.responseXML);
+</span><span class="z-text z-haml">        } else {
+</span><span class="z-text z-haml">          callback(xmlhttp.responseText);
+</span><span class="z-text z-haml">        }
+</span><span class="z-text z-haml">      }
+</span><span class="z-text z-haml">    };
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">    xmlhttp.open(method, url, true);
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">    if (method == &quot;POST&quot;)
+</span><span class="z-text z-haml">      xmlhttp.setRequestHeader(&quot;Content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">    xmlhttp.send(data);
+</span><span class="z-text z-haml">  }
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml"><span class="z-comment z-line z-slash z-haml">  <span class="z-punctuation z-section z-comment z-haml">/</span>/ Inicializa el editor Markdown con algunas opciones extra
+</span></span><span class="z-text z-haml">  var simplemde = &quot;new SimpleMDE({&quot;
+</span><span class="z-text z-haml">    element: document.getElementById(&quot;markdown_editor&quot;),
+</span><span class="z-text z-haml">    blockStyles: {
+</span><span class="z-text z-haml">      code: &quot;~~~&quot;
+</span><span class="z-text z-haml">    },
+</span><span class="z-text z-haml"><span class="z-comment z-line z-slash z-haml">    <span class="z-punctuation z-section z-comment z-haml">/</span>/ Usa el sistema propio para vista previa (kramdown + rouge)
+</span></span><span class="z-text z-haml">    previewRender: function(plainText, preview) {
+</span><span class="z-text z-haml"><span class="z-comment z-line z-slash z-haml">      <span class="z-punctuation z-section z-comment z-haml">/</span>/ Esperar un segundo sin cambios para hacer la petición
+</span></span><span class="z-text z-haml">      if (window.delay)
+</span><span class="z-text z-haml">        clearTimeout(window.delay);
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">      window.delay = &quot;setTimeout(function() {&quot;
+</span><span class="z-text z-haml">        AjaxRequest(&quot;/preview&quot;, &quot;POST&quot;, &quot;content=&quot; + encodeURIComponent(plainText), function(response) {
+</span><span class="z-text z-haml"><span class="z-comment z-line z-slash z-haml">          <span class="z-punctuation z-section z-comment z-haml">/</span>/ `preview` es el nodo que contiene la vista previa
+</span></span><span class="z-text z-haml">          preview.innerHTML = &quot;response;&quot;
+</span><span class="z-text z-haml">        });
+</span><span class="z-text z-haml">      }, 1000);
+</span><span class="z-text z-haml">
+</span><span class="z-text z-haml">      return preview.innerHTML;
+</span><span class="z-text z-haml">    }
+</span><span class="z-text z-haml">  });
+</span></code></pre>
+<p>Ahora sí, con todo esto tenemos un editor que facilita la tarea de escribir un post a cualquiera.</p>
+<h2 id="los-extras">Los extras<a class="zola-anchor" href="#los-extras" aria-label="Anchor link for: los-extras" style="visibility: hidden;"></a>
+</h2>
+<p>Un par de funcionalidades adicionales que hemos utilizado en <a rel="nofollow noreferrer" href="http://tux.ugr.es/dgiim/new/post">el formulario para LibreIM</a> son la inclusión de <a rel="nofollow noreferrer" href="http://mathjax.org/">MathJax</a> para interpretar fórmulas en LaTeX, y de un CAPTCHA mediante la gema <a rel="nofollow noreferrer" href="https://rubygems.org/gems/recaptcha/">recaptcha</a>. No entro aquí en más detalle porque son fáciles de usar; además, todo nuestro código está <a rel="nofollow noreferrer" href="https://github.com/libreim/form-im">publicado en GitHub</a>.</p>
+<h2 id="en-conclusion">En conclusión...<a class="zola-anchor" href="#en-conclusion" aria-label="Anchor link for: en-conclusion" style="visibility: hidden;"></a>
+</h2>
+<p>Mantener un blog en Jekyll tiene muchas ventajas: se puede hostear en cualquier servidor ya que es un generador de sitios estáticos, se puede realizar control de cambios por Git, etc. Y, con un poco de trabajo y una pequeña aplicación web, también se puede hacer accesible la colaboración a cualquier persona, incluso sin conocimientos de GitHub, Jekyll o Markdown. Ahora queda la parte complicada: convencer a más personas para que contribuyan al blog ;)</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 David Charte
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://dch.lu/posts/feed.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;dch.lu&#x2F;posts&#x2F;feed.xml">https:&#x2F;&#x2F;dch.lu&#x2F;posts&#x2F;feed.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;dch.lu&#x2F;posts&#x2F;feed.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://dch.lu/js/main.js"></script>
+</body>
+
+</html>
