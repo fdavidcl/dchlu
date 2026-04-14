@@ -19,12 +19,12 @@ feed_filenames = ["feed.xml"] # "feed.xml" | "atom.xml" | "rss.xml", read docs f
 taxonomies = [{ name = "tags" }, { name = "categories" }]
 
 [markdown]
-highlight_code = true
-highlight_theme = "css"
-highlight_themes_css = [
-  { theme = "serene-light", filename = "hl-light.css" },
-  { theme = "serene-dark", filename = "hl-dark.css" },
-]
+highlighting = true
+#highlight_theme = "css"
+#highlight_themes_css = [
+#  { theme = "serene-light", filename = "hl-light.css" },
+#  { theme = "serene-dark", filename = "hl-dark.css" },
+#]
 render_emoji = false
 external_links_target_blank = false
 external_links_no_follow = true
